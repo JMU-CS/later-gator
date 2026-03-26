@@ -41,23 +41,29 @@ const _laters = {
   Ounce: 'Gotta bounce',
 };
 
-const later = (t, cb) => {
-  const target = t.toUpperCase();
-  const keys = Object.keys(_laters).map(k=>k.toUpperCase())
+const later = (target, cb) => {
+  const keys = Object.keys(_laters);
+  const KEYS = Object.fromEntries(keys.map(k=>[k.toUpperCase(), {target: k, valediction:_laters[k]}]));
   const rand = Math.floor(Math.random() * keys.length);
+  
+  //choose random return value in case we can't find one;
   let result = { target: keys[rand], valediction: _laters[keys[rand]] };
+  
   if (target) {
-    if (target in keys) {
-      result = { target, valediction: _laters[target] };
+    const TARGET = target.toUpperCase();
+    if (TARGET in KEYS) {
+      result.target = target;
+      result.valediction = KEYS[TARGET].valediction;
     } else {
-      const matches = keys.filter((k) =>
-        k.includes(target))
+      const matches = Object.keys(KEYS).filter((k) =>
+        k.includes(TARGET)
       );
       if (matches.length) {
         const randMatch = Math.floor(Math.random() * matches.length);
+        const theMatch = matches[randMatch];
         result = {
-          target: matches[randMatch],
-          valediction: _laters[matches[randMatch]],
+          target: KEYS[theMatch].target,
+          valediction: KEYS[theMatch].valediction,
         };
       }
     }
@@ -67,10 +73,10 @@ const later = (t, cb) => {
 
 const options = (cb, q) =>
   setTimeout(() => {
-    const query = q.toSupperCase();
-    let keys = Object.keys(_laters).toUpperCase();
+    const query = q.toUpperCase();
+    let keys = Object.keys(_laters).map(k => k.toUpperCase());
     if (query) {
-      keys = keys.filter((k)=> k.includes(query));
+      keys = keys.filter((k) => k.includes(query));
     }
     cb(keys);
   }, 2000 + Math.random() * 3000);
