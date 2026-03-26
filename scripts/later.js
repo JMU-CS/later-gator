@@ -41,8 +41,9 @@ const _laters = {
   Ounce: 'Gotta bounce',
 };
 
-const later = (target, cb) => {
-  const keys = Object.keys(_laters);
+const later = (t, cb) => {
+  const target = t.toUpperCase();
+  const keys = Object.keys(_laters).map(k=>k.toUpperCase())
   const rand = Math.floor(Math.random() * keys.length);
   let result = { target: keys[rand], valediction: _laters[keys[rand]] };
   if (target) {
@@ -50,7 +51,7 @@ const later = (target, cb) => {
       result = { target, valediction: _laters[target] };
     } else {
       const matches = keys.filter((k) =>
-        k.toLowerCase().includes(target.toLowerCase())
+        k.includes(target))
       );
       if (matches.length) {
         const randMatch = Math.floor(Math.random() * matches.length);
@@ -64,9 +65,10 @@ const later = (target, cb) => {
   return setTimeout(() => cb(result), Math.random() * 3000);
 };
 
-const options = (cb, query) =>
+const options = (cb, q) =>
   setTimeout(() => {
-    let keys = Object.keys(_laters);
+    const query = q.toSupperCase();
+    let keys = Object.keys(_laters).toUpperCase();
     if (query) {
       keys = keys.filter((k)=> k.includes(query));
     }
